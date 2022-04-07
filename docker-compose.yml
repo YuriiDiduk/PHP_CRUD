@@ -1,0 +1,40 @@
+version: '3.7'
+services:
+  
+  db:    
+    container_name: mysql5
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    environment:      
+      - MYSQL_ROOT_PASSWORD=password123  
+   # volumes:
+   #   - ./database/script.sql:/docker-entrypoint-initdb.d/script.sql
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - app
+
+  php:
+    container_name: php8
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/html/
+    ports:
+      - 8000:80
+    networks:
+      - app
+    depends_on:
+      - db
+      
+volumes:
+ database:
+ mysqlvol:
+
+networks:
+  app:
+    driver: bridge
+    
